@@ -7,6 +7,8 @@ import com.avisenera.minecraftbot.MinecraftBot;
 import com.avisenera.minecraftbot.message.IRCMessage;
 import java.util.ArrayList;
 
+import com.oresomecraft.OresomeBattles.OresomeBattles;
+import com.oresomecraft.OresomeBattles.Utility;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -23,13 +25,13 @@ public class IRCListener extends ListenerAdapter {
         manager = irc;
         extListeners = listeners;
     }
-    
+
     // Server-related handlers
     @Override
     public void onConnect(ConnectEvent event) {
         // Check for any nick issues
         nickCheck();
-        
+
         // Join channel
         manager.joinChannel();
     }
@@ -37,20 +39,20 @@ public class IRCListener extends ListenerAdapter {
         String nick = manager.config.get(Keys.connection.nick);
         String nickpass = manager.config.get(Keys.connection.nick_password);
         if (nickpass.isEmpty()) return;
-        
+
         // Have nickpass - must identify
         if (manager.getServer().getUserBot().getNick().equals(nick)) {
             manager.getServer().sendMessage("NickServ", "IDENTIFY "+nickpass);
             pause(2000);
             return;
         }
-        
+
         // Ghosting
         manager.getServer().sendMessage("NickServ", "GHOST "+nick+" "+nickpass);
         pause(2000);
         manager.getServer().changeNick(nick);
         pause(2000);
-        
+
         // Try again
         if (manager.getServer().getUserBot().getNick().equals(nick)) {
             manager.getServer().sendMessage("NickServ", "IDENTIFY "+nickpass);
@@ -70,7 +72,7 @@ public class IRCListener extends ListenerAdapter {
         else autoreconnect = true;
     }
     public boolean autoreconnect = true;
-    
+
     // With most events, the channel is checked. This is because it's possible for an IRC
     // op to force the bot into another channel. This bot should only be concerned with
     // what's happening in one channel.
@@ -80,25 +82,25 @@ public class IRCListener extends ListenerAdapter {
     public void onMessage(MessageEvent e) {
         if (!e.getChannel().equals(manager.getChannel())) return;
         if (isCommand(e.getUser().getNick(), e.getMessage())) return;
-        
+
         IRCMessage msg = new IRCMessage();
         msg.name = e.getUser().getNick();
         msg.message = e.getMessage();
-        
+
         send(Keys.line_to_minecraft.chat, msg);
     }
-    
+
     @Override
     public void onAction(ActionEvent e) {
         if (!e.getChannel().equals(manager.getChannel())) return;
-        
+
         IRCMessage msg = new IRCMessage();
         msg.name = e.getUser().getNick();
         msg.message = e.getAction();
         send(Keys.line_to_minecraft.action, msg);
     }
 
-    
+
     @Override
     public void onJoin(JoinEvent e) {
         IRCMessage msg = new IRCMessage();
@@ -115,7 +117,7 @@ public class IRCListener extends ListenerAdapter {
         if (e.getReason() != null) msg.reason = e.getReason();
         send(Keys.line_to_minecraft.part, msg);
     }
-    
+
     @Override
     public void onQuit(QuitEvent e) {
         IRCMessage msg = new IRCMessage();
@@ -123,18 +125,18 @@ public class IRCListener extends ListenerAdapter {
         msg.reason = e.getReason();
         send(Keys.line_to_minecraft.quit, msg);
     }
-    
+
     @Override
     public void onKick(KickEvent e) {
         if (!e.getChannel().equals(manager.getChannel())) return;
-        
+
         IRCMessage msg = new IRCMessage();
         msg.kicker = e.getSource().getNick();
         msg.name = e.getRecipient().getNick();
         msg.reason = e.getReason();
         send(Keys.line_to_minecraft.kick, msg);
     }
-    
+
     @Override
     public void onNickChange(NickChangeEvent e) {
         IRCMessage msg = new IRCMessage();
@@ -146,25 +148,25 @@ public class IRCListener extends ListenerAdapter {
     @Override
     public void onMode(ModeEvent e) {
         if (!e.getChannel().equals(manager.getChannel())) return;
-        
+
         IRCMessage msg = new IRCMessage();
         msg.name = e.getUser().getNick();
         msg.mode = e.getMode();
         send(Keys.line_to_minecraft.mode_change, msg);
     }
-    
+
     @Override
     public void onTopic(TopicEvent e) {
         if (!e.isChanged()) return; // Only looking for new topics
         if (!e.getChannel().equals(manager.getChannel())) return;
-        
+
         IRCMessage msg = new IRCMessage();
         msg.name = e.getUser().getNick();
         msg.topic = e.getTopic();
         send(Keys.line_to_minecraft.topic_change, msg);
     }
 
-    
+
     /**
      * Checks if the message is actually a command.
      * @param sender The User that sent the message
@@ -180,7 +182,7 @@ public class IRCListener extends ListenerAdapter {
             o = "There " + (n==1?"is ":"are ") + n + " player" + (n==1?"":"s") + " connected" + (n==0?".":":");
             for (int i=0; i<p.length; i++) o += " " + p[i].getDisplayName();
             manager.sendMessage(Formatting.toIRC(o));
-            
+
             if (plugin.config.commandsB(Keys.commands.show_to_mc)) {
                 // Notify Minecraft players that someone used this command
                 IRCMessage msg = new IRCMessage();
@@ -188,10 +190,10 @@ public class IRCListener extends ListenerAdapter {
                 msg.message = "viewed the player list";
                 send(Keys.line_to_minecraft.action, msg);
             }
-            
+
             return true;
         }
-        
+
         // Show world time
         if (message.toLowerCase().startsWith("!time") && plugin.config.commandsB(Keys.commands.time)) {
         	String worldtimes = "";
@@ -199,7 +201,7 @@ public class IRCListener extends ListenerAdapter {
         		// Only get time from normal environments
         		if (!(w.getEnvironment() == World.Environment.NORMAL)) continue;
         		worldtimes += ", "+w.getName()+": ";
-        		
+
         		int hr = 0; int min = 0; float time = w.getTime();
         		// Correct the time so 0600 corresponds to morning
         		time += 6000;
@@ -210,7 +212,7 @@ public class IRCListener extends ListenerAdapter {
         		worldtimes += String.format("%02d:%02d", hr, min);
         	}
         	manager.sendMessage(Formatting.toIRC(worldtimes.substring(2)));
-        	
+
         	if (plugin.config.commandsB(Keys.commands.show_to_mc)) {
                 // Notify Minecraft players that someone used this command
                 IRCMessage msg = new IRCMessage();
@@ -218,10 +220,10 @@ public class IRCListener extends ListenerAdapter {
                 msg.message = "viewed the time";
                 send(Keys.line_to_minecraft.action, msg);
             }
-        	
+
         	return true;
         }
-        
+
         // Kick a player
         if (message.toLowerCase().startsWith("!mckick") && plugin.config.commandsB(Keys.commands.mckick)) {
         	// Divide the command up into its parts ([0] command, [1] target player, [2] kick reason)
@@ -231,7 +233,7 @@ public class IRCListener extends ListenerAdapter {
         		Player playerToKick = Bukkit.getServer().getPlayer(parts[1]);
         		String kickReason = (parts.length == 3) ? parts[2] : "Kicked!";
         		playerToKick.kickPlayer(kickReason);
-        		
+
         		if (plugin.config.commandsB(Keys.commands.show_to_mc)) {
                     // Notify Minecraft players that someone used this command
                     IRCMessage msg = new IRCMessage();
@@ -240,10 +242,10 @@ public class IRCListener extends ListenerAdapter {
                     send(Keys.line_to_minecraft.action, msg);
                 }
         	}
-        	
+
         	return true;
         }
-        
+
         // Ban a player
         if (message.toLowerCase().startsWith("!mcban") && plugin.config.commandsB(Keys.commands.mcban)) {
         	// Divide the command up into its parts ([0] command, [1] target player)
@@ -254,7 +256,7 @@ public class IRCListener extends ListenerAdapter {
         		String banReason = "Banned!";
         		playerToBan.setBanned(true);
         		playerToBan.kickPlayer(banReason);
-        		
+
         		if (plugin.config.commandsB(Keys.commands.show_to_mc)) {
                     // Notify Minecraft players that someone used this command
                     IRCMessage msg = new IRCMessage();
@@ -263,13 +265,20 @@ public class IRCListener extends ListenerAdapter {
                     send(Keys.line_to_minecraft.action, msg);
                 }
         	}
-        	
+
         	return true;
         }
-        
+
+        // Gets the current Battle
+        if (message.toLowerCase().startsWith("!battle")) {
+            manager.sendMessage("The current battle is a " + Utility.correctCaps(Utility.getMode().toString())
+                    + " at " + OresomeBattles.getInstance().mapFullNames.get(Utility.getArena()));
+            return true;
+        }
+
         return false;
     }
-    
+
     /**
      * Passes an IRC message to the listeners.
      * @param format The formatting string the message should use
@@ -278,7 +287,7 @@ public class IRCListener extends ListenerAdapter {
     void send(Keys.line_to_minecraft format, IRCMessage message) {
         String send = plugin.getFormatter().toMinecraft(format, message);
         if (send == null) return; // Blank line - ignore
-        
+
         for (MBListener l : extListeners) {
             l.onMessage(send);
         }

@@ -29,6 +29,12 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.oresomecraft</groupId>
+            <artifactId>OresomeBattles</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
+        </dependency>
 	</dependencies>
 	<build>
 		<defaultGoal>clean package</defaultGoal>
