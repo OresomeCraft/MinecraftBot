@@ -225,10 +225,10 @@ public class IRCListener extends ListenerAdapter {
         }
 
         // Kick a player
-        if (message.toLowerCase().startsWith("!mckick") && plugin.config.commandsB(Keys.commands.mckick)) {
+        if (message.toLowerCase().startsWith("!ingamekick") && plugin.config.commandsB(Keys.commands.mckick)) {
         	// Divide the command up into its parts ([0] command, [1] target player, [2] kick reason)
         	String[] parts = message.split(" ", 3);
-        	if (manager.userHasOp(sender) && parts.length >= 2) {
+        	if (manager.userHasVoice(sender) && parts.length >= 2) {
         		// Kick player
         		Player playerToKick = Bukkit.getServer().getPlayer(parts[1]);
         		String kickReason = (parts.length == 3) ? parts[2] : "Kicked!";
@@ -247,10 +247,10 @@ public class IRCListener extends ListenerAdapter {
         }
 
         // Ban a player
-        if (message.toLowerCase().startsWith("!mcban") && plugin.config.commandsB(Keys.commands.mcban)) {
+        if (message.toLowerCase().startsWith("!ingameban") && plugin.config.commandsB(Keys.commands.mcban)) {
         	// Divide the command up into its parts ([0] command, [1] target player)
         	String[] parts = message.split(" ", 2);
-        	if (manager.userHasOp(sender) && parts.length == 2) {
+        	if (manager.userHasVoice(sender) && parts.length == 2) {
         		// Ban player
         		Player playerToBan = Bukkit.getServer().getPlayer(parts[1]);
         		String banReason = "Banned!";
