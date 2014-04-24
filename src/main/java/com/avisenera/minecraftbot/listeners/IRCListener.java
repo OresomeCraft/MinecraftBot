@@ -101,6 +101,7 @@ public class IRCListener extends ListenerAdapter {
 
     @Override
     public void onJoin(JoinEvent e) {
+        if (!e.getChannel().getName().equalsIgnoreCase(plugin.getConfig().getString("connection.channel"))) return;
         IRCMessage msg = new IRCMessage();
         msg.name = e.getUser().getNick();
         msg.channel = e.getChannel().getName();
@@ -109,6 +110,7 @@ public class IRCListener extends ListenerAdapter {
 
     @Override
     public void onPart(PartEvent e) {
+        if (!e.getChannel().getName().equalsIgnoreCase(plugin.getConfig().getString("connection.channel"))) return;
         IRCMessage msg = new IRCMessage();
         msg.name = e.getUser().getNick();
         msg.channel = e.getChannel().getName();
