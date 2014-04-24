@@ -111,5 +111,19 @@ public class MainListener extends MBListener implements Listener {
         
         send(Keys.line_to_irc.kick, msg);
     }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (plugin.getConfig().getBoolean("settings.send_death_messages")) {
+            // Check if death message is null or blank - if yes, it was cancelled.
+            String dm = event.getDeathMessage();
+            if (dm == null || dm.isEmpty()) return;
+
+            MCMessage msg = new MCMessage();
+            msg.player = event.getEntity();
+            msg.message = dm;
+            send(Keys.line_to_irc.death, msg);
+        }
+    }
     
 }

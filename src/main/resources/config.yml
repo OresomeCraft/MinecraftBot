@@ -49,6 +49,9 @@ settings:
   #quit_message: The quit message used when the bot quits IRC. Used only when the plugin is disabled.
   quit_message: ''
 
+  #send_death_messages: Defines whether or not to send death messages
+  send_death_messages: true
+
 commands:
 #IRC command settings
   #show_to_mc: Whether or not to display in Minecraft that someone on IRC used a command
