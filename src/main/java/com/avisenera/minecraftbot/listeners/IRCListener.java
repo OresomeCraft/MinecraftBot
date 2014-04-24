@@ -7,8 +7,6 @@ import com.avisenera.minecraftbot.MinecraftBot;
 import com.avisenera.minecraftbot.message.IRCMessage;
 import java.util.ArrayList;
 
-import com.oresomecraft.OresomeBattles.OresomeBattles;
-import com.oresomecraft.OresomeBattles.Utility;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -267,13 +265,6 @@ public class IRCListener extends ListenerAdapter {
         	}
 
         	return true;
-        }
-
-        // Gets the current Battle
-        if (message.toLowerCase().startsWith("!battle")) {
-            manager.sendMessage("The current battle is a " + Utility.correctCaps(Utility.getMode().toString())
-                    + " at " + OresomeBattles.getInstance().mapFullNames.get(Utility.getArena()));
-            return true;
         }
 
         return false;
