@@ -29,12 +29,6 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-        <dependency>
-            <groupId>com.oresomecraft</groupId>
-            <artifactId>OresomeBattles</artifactId>
-            <version>1.0</version>
-            <type>jar</type>
-        </dependency>
 	</dependencies>
 	<build>
 		<defaultGoal>clean package</defaultGoal>
@@ -52,7 +46,7 @@
 			<!-- Shade plugin: Used to include PircBotX into the jar -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.0</version>
+				<version>2.1</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
